@@ -42,7 +42,7 @@ function stackCols() {
 
 
       // TODO Visually label the appts
-      appt.append(appt.id);
+      appt.text("id: " + appt.id + ",  data-group: " + appt.attr('data-group'));
 
       // TODO Debug
       if (debug_finest) {
