@@ -88,7 +88,9 @@ function stackCols() {
             console.log($(this).attr('id') + " is being compared to " + appt.id);
           };
 
-          if (start <= appt.start && end >= appt.end) { //these overlap
+          if ((start < appt.start && end > appt.start && end <= appt.end)
+                || (start >= appt.start && end <= appt.end)
+                || (start >= appt.start && end > appt.end)) { //these overlap
 
             if (debug_fine) {
               console.log($(this).attr('id') + " overlaps " + appt.attr('id'));
