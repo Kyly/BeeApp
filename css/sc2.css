@@ -1,0 +1,451 @@
+::selection {
+    background: transparent; /* Safari */
+}
+::-moz-selection {
+    background: transparent; /* Firefox */
+}
+html, body{
+    height:100%;
+    overflow:hidden;
+    min-width:440px;
+}
+#nav{
+    overflow:hidden;
+}
+.times {
+    background: none repeat scroll 0 0 #EDEDED;
+    font-size: 12px;
+    text-align: right;
+    width: 53px;
+    float:left;
+    clear:none;
+}
+#times_right {
+    right: 0;
+    position: absolute;
+    /*top: 97px;*/
+    border-left:1px solid #fff;
+}
+.hour{
+    width:50px;
+    height:36px;
+    float:none;
+    clear:both;
+    padding:1px 3px 0 0;
+    border-bottom:1px solid #fff;
+    color:#555;
+    text-shadow:1px 1px 0 #fff;
+}
+.hours {
+    z-index: 10;
+    background:#EDEDED;
+}
+#titles {
+    display: table;
+    table-layout: fixed;
+    background: none repeat scroll 0 0 #990000;
+    border-left: 1px solid #FFFFFF;
+    clear: none;
+    float: left;
+    height: 49px;
+    width: calc(100% - 107px);
+    overflow:hidden;
+}
+#titles .title{
+    display: table-cell;
+}
+#sch_titles{
+    float: none;
+    clear:both;
+    width:100%;
+    height:50px
+}
+.daybtn {
+    font-size: 25px;
+    height: 37px;
+    padding: 12px 0 0;
+    text-align: left;
+    background-color:#cdcdcd;
+    color:#cdcdcd;
+    background-repeat: no-repeat;
+    background-position:4px 4px;
+    cursor:pointer;    
+    text-indent: 21px;
+    z-index: 50;
+    width:53px;
+    top:48px;
+    float:left;
+    clear:none;
+}
+.daybtn:hover{
+    color:#aaa;
+    background-color:#aaa;
+}
+.daybtn:active{
+    background-position:4px 5px;
+    padding: 13px 0 0;
+    height: 37px;
+}
+#btn_next{
+    background-image:url('../images/sch.next.png');    
+    text-indent: 6px;
+    float:right;
+    clear:none;
+}
+#btn_prev{
+    background-image:url('../images/sch.prev.png');
+    text-indent:21px;
+}
+#controls {
+    background: none repeat scroll 0 0 #D3D3D3;
+    width: 100%;
+    float: none;
+    clear: both;
+    position: fixed;
+    bottom: 0;
+    height: 50px;
+    border-top: 1px solid #fff;
+}
+#viewport {
+    height:calc(100%-150px);
+    overflow: scroll;
+    position: relative;
+}
+#scheduler {
+    background: #ededed;
+    float:left;
+    clear:none;
+    height: 921px;
+    width: calc(100% - 107px);
+    border-left:1px solid #fff;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    display: table;
+    table-layout: fixed;
+}
+.schedules {
+    display:table-cell;
+}
+.col {
+    display: block;
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+.appts_set {
+    display: table;
+    float: none;
+    table-layout: fixed;
+    width: 100%;
+}
+.appts {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background: #fff;
+    background-image:url('../images/sch.hourstripes.jpg ');
+    height: 900px;
+    padding:0 3px;
+    display:table-cell;    
+    border-left: 1px solid #EEEEEE;
+    border-right: 1px solid #EEEEEE;
+}
+.appt_canvas {
+    height: 100%;
+    position: relative;
+    width: 100%;
+    z-index:50;
+}
+#display_date{
+    float:left;
+    clear:none;
+    width:165px;
+}
+#day_number {
+    font-size: 33px;
+    padding: 11px 10px 0 11px;
+    height: 33px;
+    float: left;
+    clear: none;
+}
+#day_name{
+    clear: none;
+    float: left;
+    font-size: 13px;
+    padding: 13px 0 0;
+    width: 100px;
+}
+#month_name {
+    font-size: 13px;
+}
+#controls .fa{
+    font-size:50px;
+}
+#controls .fa {
+    font-size: 40px;
+    display: block;
+    float: left;
+    clear: none;
+    padding: 6px 15px;
+}
+#controls .fa:hover{
+    background:#eaeaea;
+    cursor:pointer;
+}
+#datepicker {
+    background: none repeat scroll 0 0 #EAEAEA;
+    height: 205px;
+    left: 165px;
+    position: absolute;
+    top: -207px;
+    width: 260px;
+    display:none;
+    border:1px solid #fff;
+}
+.ui-datepicker{
+    border:1px solid #cacaca;
+    background:#fff;
+    margin:5px;
+    padding-top:5px;
+}
+.ui-icon-circle-triangle-w,
+.ui-icon-circle-triangle-e{
+    border:8px solid transparent;
+    width:0;
+    height:0;
+    overflow:hidden;
+    display:block;
+    cursor:pointer;
+}
+.ui-icon-circle-triangle-w{
+    border-right-color:#555;
+}
+.ui-icon-circle-triangle-e{
+    border-left-color:#555;
+}
+.ui-icon-circle-triangle-w:hover{
+    border-right-color:#777;
+}
+.ui-icon-circle-triangle-e:hover{
+    border-left-color:#777;
+}
+.ui-datepicker-prev {
+    clear: none;
+    float: left;
+    margin: 7px 0 0 4px;
+}
+.ui-icon.ui-icon-circle-triangle-e {
+    float: right;
+    margin: 7px 4px 0 0;
+}
+.ui-datepicker-title {
+    clear: none;
+    color: #555555;
+    float: left;
+    font-size: 15px;
+    font-weight: bold;
+    height: 22px;
+    padding: 8px 0 0;
+    text-align: center;
+    width: 205px;
+}
+.ui-datepicker-calendar {
+    -moz-box-sizing: border-box;
+    border-collapse: collapse;
+    height: 158px;
+    text-align: center;
+    width: 100%;
+    border: 5px solid #fff;
+}
+.ui-datepicker-calendar thead{
+    color: #9A9A9A;
+    font-size: 13px;
+}
+.ui-datepicker-calendar tbody tr td{
+    background:#f5f5f5;
+    border:1px solid #fff;
+    width:14.25%;
+    font-size: 13px;
+}
+.ui-datepicker-calendar tbody tr td:hover {
+    background: #FFE9A4;
+    cursor: pointer;
+}
+.ui-datepicker-calendar tbody tr td a{
+    color:#555;
+    text-decoration:none;
+}
+.ui-datepicker-calendar tbody tr td.ui-datepicker-today{
+    background:#ff8000;
+}
+.ui-datepicker-calendar tbody tr td.ui-datepicker-current-day{
+    color:#fff;
+    background:#39a8ff;
+    font-weight:bold;
+}
+.ui-datepicker-calendar tbody tr td.ui-datepicker-today a,
+.ui-datepicker-calendar tbody tr td.ui-datepicker-current-day a{
+    color:#fff;
+}
+.employee {
+    clear: none;
+    float: left;
+    margin-right: 10px;
+    width: 200px;
+}
+.employee_title, .route_titles > div {
+    background: none repeat scroll 0 0 #000000;
+    color: #FFFFFF;
+    font-size: 14px;
+    height: 16px;
+    padding: 6px 0 2px;
+    text-align: center;
+    overflow:hidden;
+    z-index: 53;
+    border-bottom:1px solid #fff;
+    /*border-left:.5px solid #fff;*/
+    border-right:1px solid #fff;
+    margin-bottom:0;
+}
+.route_titles{
+    width:100%;
+    display: table;
+    table-layout: fixed;
+}
+.route_titles > div {
+    display: table-cell;
+}
+.route_title{
+    display:table-cell;
+}
+.route_title span{
+    height:16px;
+    overflow:hidden;
+    display:block;
+}
+.emp2 .appts{
+    width:calc(50% - 1px);
+}
+.emp2 .appts:nth-child(3){
+    margin-right:1px;
+}
+#ui-datepicker-div {
+    display: none;
+}
+.anytime {
+    background: none repeat scroll 0 0 #33A9FF;
+    clear: none;
+    color: #FFFFFF;
+    float: right;
+    font-size: 12px;
+    font-weight: bold;
+    height: 18px;
+    padding-top: 6px;
+    position: absolute;
+    right: -1px;
+    text-align: center;
+    top: 0;
+    width: 20px;
+}
+.account, .contract, .name, .street, .city, .pest{
+    display:none;
+}
+.account{
+    display:block;
+}
+.appt {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background:#c9ffcf;
+    border:1px solid #4a9a4c;
+    display: block;
+    font-size: 12px;
+    padding: 3px 0 0 10px;
+    overflow:hidden;
+    position:absolute;
+    width:100%;
+    z-index: 90;
+}
+.status_flag {
+    height: 1000px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width:7px;
+}
+.done .status_flag { background:#4a9a4c; }
+.missed .status_flag { background:#ff8000; }
+.appt.red{
+    border-color:#d80f0f;
+    background:#ffc9ce;
+}
+.appt.credithold{
+    border-color:#d80f0f;
+    color:#d80f0f;
+    background:#eee;
+}
+.cancelled .status_flag {
+    padding-top:2px;
+    text-align: center;
+    text-indent: 2px;
+    font-size:10px;
+}
+.appt.cancelled {
+    background: none repeat scroll 0 0 #D80F0F;
+    border: medium none;
+    color: #FFFFFF;
+    float: right;
+    width: 10px;
+}
+.hour_mouse_tracker {
+  background-color: #ffc600;
+  height: 8px;
+  opacity: 0.3;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.misc_appt_form, .service_appt_form{
+    display:none;
+}
+.appt_type_btns {
+  clear: both;
+  float: none;
+  height: auto;
+  padding-top: 20px;
+  text-align: center;
+  width: 100%;
+}
+.appt_type_btns b {
+  clear: none;
+  color: #999999;
+  display: block;
+  float: none;
+  padding-bottom: 15px;
+}
+.appt_type_btns div {
+  clear: none;
+  color: #333333;
+  float: left;
+  font-size: 18px;
+  height: 57px;
+  margin: 0 22px;
+  padding-top: 42px;
+  text-align: center;
+  width: 235px;
+  cursor:pointer;
+}
+.appt_type_btns div:hover{
+    opacity:0.8;
+}
+.appt_type_btns .misc_appt{
+    background:#bedaff;
+    border:1px solid #5e91d6;
+}
+.appt_type_btns .service_stop{
+    background:#ccffca;
+    border:1px solid #509a3e;
+    float:right;
+}

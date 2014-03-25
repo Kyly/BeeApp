@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SCHEDULER</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+        <script src="js.1.10.2/scheduler.js" ></script>
+        <script src="js.1.10.2/nav.js" ></script>
+        <script src="js.1.10.2/d2.js" ></script>
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/nav.css">
+        <link rel="stylesheet" href="css/sc2.css">
+    </head>
+    <body>
+        <div id="nav">
+            <div id="nav_content">
+                <img id="logo" src="images/logo.png"/>
+                <a href="#">DASHBOARD</a>
+                <a href="#" class="selected">SCHEDULER <i class="fa fa-caret-up"></i></a>
+                <a href="#">PREFERENCES</a>
+                <a href="#">MY ACCOUNT</a>
+                <a href="#">LOG OUT</a>
+                <div id="search_by">
+                    <div id="search_value">Acct. #</div>
+                    <div id="search_options">
+                        <span>Acct. #</span>
+                        <span>Contract #</span>
+                        <span>Address</span>
+                        <span>Name </span>
+                        <span>Acct Name </span>
+                        <span>Job Name </span>
+                        <span>Invoice # </span>
+                        <span>Notes </span>
+                    </div>
+                    <div id="search_arrow"></div>
+                </div>
+                <input type="text" id="search" placeholder="SEARCH..."/>
+            </div>
+        </div>
+
+        <div id="sch_titles">
+            <div id="btn_prev" class="daybtn">-1</div>
+            <div id="titles">
+                <div class="title">
+                    <div class="employee_title">NAME NAME</div>
+                    <div class="route_titles">
+                        <div class="route_title"><span>ROUTE</span></div>
+                    </div>
+                </div>
+                <div class="title">
+                    <div class="employee_title">NAME NAME</div>
+                    <div class="route_titles">
+                        <div class="route_title"><span>ROUTE</span></div>
+                    </div>
+                </div>
+                <div class="title">
+                    <div class="employee_title">NAME NAME</div>
+                    <div class="route_titles">
+                        <div class="route_title"><span>ROUTE 1</span></div>
+                        <div class="route_title"><span>ROUTE 2</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="btn_next" class="daybtn">+1</div>
+        </div>
+        <div id="viewport">
+            <div class="times">
+                <div class="hours">
+                    <div class="hour">12 am</div><div class="hour">1 am</div><div class="hour">2 am</div><div class="hour">3 am</div><div class="hour">4 am</div><div class="hour">5 am</div><div class="hour">6 am</div><div class="hour">7 am</div><div class="hour">8 am</div><div class="hour">9 am</div><div class="hour">10 am</div><div class="hour">11 am</div>
+                    <div class="hour">12 pm</div><div class="hour">1 pm</div><div class="hour">2 pm</div><div class="hour">3 pm</div><div class="hour">4 pm</div><div class="hour">5 pm</div><div class="hour">6 pm</div><div class="hour">7 pm</div><div class="hour">8 pm</div><div class="hour">9 pm</div><div class="hour">10 pm</div><div class="hour">11 pm</div>
+                    <div class="hour_mouse_tracker"></div>
+                </div>
+            </div>
+            <div id="scheduler">
+                <div class="schedules">
+                    <div class="col">
+                        <div class="appts_set">
+                            <div class="appts">
+                                <div class="appt_canvas">
+                                    <div id="appt0" data-start="700"  data-end="800"  class="appt"></div>
+                                    <div id="appt1" data-start="700"  data-end="900"  class="appt"></div>
+                                    <div id="appt2" data-start="700"  data-end="900"  class="appt"></div>
+<!--                                    <div id="appt2" data-start="900"  data-end="1100" class="appt"></div>
+                                    <div id="appt3" data-start="900"  data-end="1100"  class="appt"></div>
+                                    <div id="appt4" data-start="1100" data-end="1300" class="appt"></div>
+                                    <div id="appt5" data-start="1100" data-end="1300" class="appt"></div>
+                                    <div id="appt6" data-start="1100" data-end="1300" class="appt"></div>
+                                    <div id="appt7" data-start="1300" data-end="1600" class="appt"></div>-->
+                                    <div id="appt8" data-start="1300" data-end="1400" class="appt"></div>
+                                    <div id="appt9" data-start="1300" data-end="1400" class="appt"></div>
+                                    <div id="appt10" data-start="1400" data-end="1500" class="appt"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="schedules">
+                    <div class="col">
+                        <div class="appts_set">
+                            <div class="appts">
+                                <div class="appt_canvas">
+                                   <div id="appt11" data-start="700"  data-end="800"  class="appt"></div>
+                                    <div id="appt12" data-start="800"  data-end="1000"  class="appt"></div>
+                                    <div id="appt13" data-start="800"  data-end="1000"  class="appt"></div>
+                                    <div id="appt14" data-start="1000" data-end="1300"  class="appt"></div>
+                                    <div id="appt15" data-start="1000" data-end="1100"  class="appt"></div>
+                                    <div id="appt16" data-start="1000" data-end="1100"  class="appt"></div>
+                                   <div id="appt17" data-start="1100" data-end="1200"  class="appt"></div>
+                                    <div id="appt18" data-start="1200"  data-end="1400"  class="appt"></div>
+                                    <div id="appt19" data-start="1200"  data-end="1400"  class="appt"></div>
+                                    <div id="appt20" data-start="1400"  data-end="1500"  class="appt"></div>
+                                    <div id="appt21" data-start="1500"  data-end="1700"  class="appt"></div>
+                                    <div id="appt22" data-start="1500"  data-end="1700"  class="appt"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="schedules">
+                    <div class="col"> 
+                        <div class="appts_set"> 
+                            <div class="appts">
+                                <div class="appt_canvas">
+
+
+                                </div>
+                            </div>
+                            <div class="appts">
+                                <div class="appt_canvas"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="times" id="times_right">
+                <div class="hours">
+                    <div class="hour">12 am</div><div class="hour">1 am</div><div class="hour">2 am</div><div class="hour">3 am</div><div class="hour">4 am</div><div class="hour">5 am</div><div class="hour">6 am</div><div class="hour">7 am</div><div class="hour">8 am</div><div class="hour">9 am</div><div class="hour">10 am</div><div class="hour">11 am</div>
+                    <div class="hour">12 pm</div><div class="hour">1 pm</div><div class="hour">2 pm</div><div class="hour">3 pm</div><div class="hour">4 pm</div><div class="hour">5 pm</div><div class="hour">6 pm</div><div class="hour">7 pm</div><div class="hour">8 pm</div><div class="hour">9 pm</div><div class="hour">10 pm</div><div class="hour">11 pm</div>
+                    <div class="hour_mouse_tracker"></div>
+                </div>
+            </div>
+        </div>
+        <div id="controls">
+            <div id="display_date">
+                <div id="day_number">31</div>
+                <div id="day_name">SATURDAY</div>
+                <div id="month_name">DECEMBER</div>
+            </div>
+            <div id="calendar" class="fa fa-calendar"></div>
+            <div id="datepicker" class="datepicker"></div>
+            <div id="print" class="fa fa-print"></div>
+            <div id="route_options" class="fa fa-columns"></div>
+        </div>
+        
+        <div id="overlay"></div>
+        <div id='d2'>
+            <div id='d_tile'>
+                <div id='d_min'>&minus;</div>
+                <div id="d_text">New Appointment</div>
+                <div id='d_close'>&times;</div>
+            </div>
+            <div id='d_content'>
+            </div>
+            <div id='d_controls'>
+            </div>
+        </div>
+        
+        <div id="templates">
+            <div id="add_appt">
+                <div class="appt_type_btns">
+                    <b>Select An Appointment Type</b>
+                    <div class="misc_appt">MISC APPOINTMENT</div>
+                    <div class="service_stop">SERVICE STOP</div>
+                </div>
+                <form class="misc_appt_form">
+                    misc appt selected
+                </form>
+                <form class="service_appt_form">
+                    service stop selected
+                </form>
+            </div>
+        </div>
+</html>
