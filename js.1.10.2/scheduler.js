@@ -37,7 +37,8 @@ function stackCols() {
       appt.start = $(this).attr('data-start');
       appt.end = $(this).attr('data-end');
 
-      appt.attr('data-group', group_id);
+      if (appt.attr('data-group') == null)
+        appt.attr('data-group', group_id++);
 
 
       // TODO Visually label the appts
@@ -46,6 +47,7 @@ function stackCols() {
       // TODO Debug
       if (debug_finest) {
         iter0++;
+        console.log("appt data-group: " + appt.attr('data-group'));
         console.log(iter0 + ":Outer find is running on " + appt.id);
       };
 
@@ -120,7 +122,6 @@ function stackCols() {
 
           } else if ($(this).attr('data-group') == null) {
 
-            $(this).attr('data-group', group_id++);
             // TODO Debug
             if (debug_finer) {
               console.log($(this).attr('id') + " does not overlap " + appt.id);
@@ -129,7 +130,12 @@ function stackCols() {
           }
 
         }
-        console.log("");
+
+        // TODO Debug
+        if (debug_finest) {
+          console.log("group_id: " + group_id);
+        }
+
       });
     });
   });
