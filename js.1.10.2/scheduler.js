@@ -44,7 +44,7 @@ function stackCols() {
       // TODO Visually label the appts
       appt.text("id: " + appt.id + ",  data-group: " + appt.attr('data-group'));
 
-      // TODO Debug
+      // @Debug
       if (debug_finest) {
         iter0++;
         console.log("appt data-group: " + appt.attr('data-group'));
@@ -64,7 +64,7 @@ function stackCols() {
       // in the same col
       col.find('.appt').each(function() { //for each appointment
 
-        // TODO Debug
+        // @Debug
         if (debug_finest) {
           iter1++;
           console.log(iter0 + "." + iter1 + ":Inner find is running on " + $(this).attr('id'));
@@ -88,7 +88,7 @@ function stackCols() {
             console.log($(this).attr('id') + " is being compared to " + appt.id);
           };
 
-          if (start <= appt.start && end >= appt.end) { //these overlap
+          if (end >= appt.start || end >= appt.start) { //these overlap
 
             if (debug_fine) {
               console.log($(this).attr('id') + " overlaps " + appt.attr('id'));
@@ -101,6 +101,8 @@ function stackCols() {
               $(this).attr('data-group', appt.attr('data-group'));
 
               // $(this).append(" group " + $(this).attr('data-group'));
+
+              // @Debug
               if (debug_fine) {
                 console.log($(this).attr('id') + " is in the group " + $(this).attr("data-group"));
               };
@@ -122,7 +124,7 @@ function stackCols() {
 
           } else if ($(this).attr('data-group') == null) {
 
-            // TODO Debug
+            // @Debug
             if (debug_finer) {
               console.log($(this).attr('id') + " does not overlap " + appt.id);
               console.log("its group remains " + $(this).attr('data-group'));
@@ -131,7 +133,7 @@ function stackCols() {
 
         }
 
-        // TODO Debug
+        // @Debug
         if (debug_finest) {
           console.log("group_id: " + group_id);
         }
