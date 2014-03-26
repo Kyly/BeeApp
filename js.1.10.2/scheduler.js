@@ -15,6 +15,64 @@ $(document).ready(function() {
   stackCols();
 });
 
+// Find if there are any overlapping appts
+function makeGroup(col) {
+
+  var status = false;
+
+  console.log("isOverlapping");
+
+  col.find('.appt').each(function() {
+
+    console.log("1");
+
+    var appt = $(this);
+    appt.id = $(this).attr('id');
+    appt.start = $(this).attr('data-start');
+    appt.end = $(this).attr('data-end');
+
+    // TODO Ask why this is needed
+    appt.css({
+      top: apptTop(appt.start) + 'px',
+      height: apptHeight(appt.start, appt.end) + 'px'
+    });
+
+    col.find('.appt').each(function() { //for each appointment
+
+      console.log("2");
+
+      //  if it's not the appointment working with above
+      if ($(this).attr('id') != appt.id) {
+
+        console.log("3");
+        // you can retrieve appt params like this, 
+        var start = parseInt($(this).attr('data-start'));
+
+        // or set them like:  $(this).attr('data-whatever', 'value');
+        var end = parseInt($(this).attr('data-end'));
+        var appt_start = parseInt(appt.start);
+        var appt_end = parseInt(appt.end);
+
+
+        // Find any overlap
+        if (appt_start > end && appt_end < start || appt_end > start &&
+          appt_start < end) {
+
+          console.log('4');
+          status = true;
+        } else
+          status = false;
+      }
+    });
+  });
+
+return status;
+}
+
+function makeSet() {
+
+}
+
 function stackCols() {
 
 
@@ -24,15 +82,15 @@ function stackCols() {
     var col = $(this);
     var group_id = 0;
 
+    console.log(isOverlapping(col));
+
     // Counter to better understand iteration of the find function
     var iter0 = 0;
 
     // find each one of this collumns appointments
     $(this).find('.appt').each(function() {
 
-
-      var iter1 = 0;
-      var group_size = 1;
+      var iter1 = 0; // This is used in debug messages
       var appt = $(this);
       appt.id = $(this).attr('id');
       appt.start = $(this).attr('data-start');
@@ -99,9 +157,6 @@ function stackCols() {
           if (appt_start > end && appt_end < start || appt_end > start &&
             appt_start < end) {
 
-            // Keep track of the size of the group
-            group_size++;
-
             // @Debug f+
             if (debug_fine) {
               console.log(appt.attr('id') + " overlaps " + $(this).attr(
@@ -117,39 +172,46 @@ function stackCols() {
               // @Debug f+
               if (debug_fine) {
                 console.log($(this).attr('id') + " is in the group " +
-                  $(
-                    this).attr("data-group"));
+                  $(this).attr("data-group"));
               };
 
             }
 
-          } else if ($(this).attr('data-group') == null) {
+          }
+
+          // If no overlap was found found this is not in a group
+          // next overlap will be in a new group
+          else if ($(this).attr('data-group') == null) {
 
             // Incrementing value to offset appts
             var left_offset = 0;
+            var group_length;
+            var box_size;
+            var group_selector = '.appt[data-group=' + appt.attr(
+              'data-group') + ']';
 
-            // Number of members in group
-            var group_length = $('.appt[data-group=' + appt.attr(
-              'data-group') + ']').length;
+            //Find sub groups. These will be item that do not overlap in
+            // the group
+            col.find(group_selector).each(function() {
+              // Select on Item than check through all the item
+              // and see if there is an item that does not overlap
+              // then add another tag 'sub-group' and number the 
+              // subgroups. 
+            });
+
+            group_length = $(group_selector).length;
 
             // Size of boxes
             var box_size = 100 / group_length;
 
-            console.log(">>>>" + group_length + " is length of group " +
-              appt.attr('data-group'));
+            col.find(group_selector).each(function() {
 
-            col.find('.appt[data-group=' + appt.attr('data-group') + ']')
-              .each(
-                function() {
+              $(this).css({
+                left: (box_size * left_offset++) + '%',
+                width: box_size + '%'
+              });
 
-                  $(this).css({
-                    left: (box_size * left_offset++) + '%',
-                    width: box_size + '%'
-                  });
-
-                });
-
-            group_size = 1;
+            });
 
             // @Debug
             if (debug_finer) {
@@ -201,7 +263,9 @@ function appts() {
 function newAppts() {
   //  Creates a new appointment div when you click and drag in a collumn 
   $(document).on('mousedown', '.appt_canvas', function(e) {
-    if ($(e.originalEvent.target).hasClass('appt_canvas')) { //make sure this is a direct click
+
+    //make sure this is a direct click
+    if ($(e.originalEvent.target).hasClass('appt_canvas')) {
       var pos = Math.round($('.hour_mouse_tracker').css('top').replace('px',
         '')); // / 37) * 37;
       var apt = $('<div id="new_appt" class="appt"></div>').appendTo(this);
