@@ -32,13 +32,17 @@ function stackCols() {
 
 
       var iter1 = 0;
+      var group_size = 1;
       var appt = $(this);
       appt.id = $(this).attr('id');
       appt.start = $(this).attr('data-start');
       appt.end = $(this).attr('data-end');
 
-      if (appt.attr('data-group') == null)
+
+      if (appt.attr('data-group') == null) {
+
         appt.attr('data-group', group_id++);
+      }
 
 
       // TODO Visually label the appts
@@ -65,6 +69,7 @@ function stackCols() {
       // in the same col
       col.find('.appt').each(function() { //for each appointment
 
+
         // @Debug
         if (debug_finest) {
           iter1++;
@@ -76,43 +81,26 @@ function stackCols() {
         //  if it's not the appointment working with above
         if ($(this).attr('id') != appt.id) {
 
-
-          // basically feel free to re-write anything inside of 
-          // this col.find function here's where I'm going nuts
-
           // you can retrieve appt params like this, 
-          var start = $(this).attr('data-start');
+          var start = parseInt($(this).attr('data-start'));
 
           // or set them like:  $(this).attr('data-whatever', 'value');
-          var end = $(this).attr('data-end');
+          var end = parseInt($(this).attr('data-end'));
+          var appt_start = parseInt(appt.start);
+          var appt_end = parseInt(appt.end);
+
 
           if (debug_finer) {
             console.log($(this).attr('id') + " is being compared to " +
               appt.id);
           };
 
-          // if ((start < appt.start && end > appt.start && end <= appt.end) 
-          //   || (start >= appt.start && end <= appt.end) 
-          //   || (start >= appt.start && end > appt.end)) { //these overlap
+          // Find any overlap
+          if (appt_start > end && appt_end < start || appt_end > start &&
+            appt_start < end) {
 
-          // @Debug f++
-          if (debug_finest) {
-
-            console.log("(" + appt.start + " > " + end + ") && (" + appt.end +
-              " < " + start + ") || (" + appt.end + " < " + start +
-              " && " + appt.start + " < " + end + ")");
-
-
-            console.log((parseInt(appt.start) > parseInt(end)) + " && " +
-              parseInt(appt.end) < parseInt(start) +
-              " || " + parseInt(appt.end) < parseInt(start) + " && " +
-              parseInt(appt.start) < parseInt(end));
-
-          }
-
-          if (parseInt(appt.start) > parseInt(end) && parseInt(appt.end) <
-            parseInt(start) || parseInt(appt.end) > parseInt(start) &&
-            parseInt(appt.start) < parseInt(end)) {
+            // Keep track of the size of the group
+            group_size++;
 
             // @Debug f+
             if (debug_fine) {
@@ -135,20 +123,33 @@ function stackCols() {
 
             }
 
-
-            // When you decide what the appointments width and distance from 
-            // the left should be, assign like this:
-            // appt.css({
-            //   left: 0,
-            //   width: '100%'
-            // });
-            // // or something like
-            // appt.css({
-            //   left: '33%',
-            //   width: '33%'
-            // });
-
           } else if ($(this).attr('data-group') == null) {
+
+            // Incrementing value to offset appts
+            var left_offset = 0;
+
+            // Number of members in group
+            var group_length = $('.appt[data-group=' + appt.attr(
+              'data-group') + ']').length;
+
+            // Size of boxes
+            var box_size = 100 / group_length;
+
+            console.log(">>>>" + group_length + " is length of group " +
+              appt.attr('data-group'));
+
+            col.find('.appt[data-group=' + appt.attr('data-group') + ']')
+              .each(
+                function() {
+
+                  $(this).css({
+                    left: (box_size * left_offset++) + '%',
+                    width: box_size + '%'
+                  });
+
+                });
+
+            group_size = 1;
 
             // @Debug
             if (debug_finer) {
