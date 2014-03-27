@@ -84,32 +84,28 @@ function makeGroups(col) {
   return group_id;
 }
 
+/**
+ * @brief Resizes boxes in a group and changes th
+ * @details [long description]
+ * 
+ * @param l [description]
+ * @param d [description]
+ * @param t [description]
+ * @return [description]
+ */
 function resizeGroup(col, group_id, set_count) {
 
-
-  console.log("Group id is a " + typeof(group_id));
   // Incrementing value to offset appts
   var left_offset = 0;
   var box_size;
   var group_selector = '.appt[data-group=' + group_id + ']';
 
-  // //Find sub groups. These will be item that do not overlap in
-  // // the group
-  // set_count = makeSet(col, group_selector);
-
-  // console.log(" set_count=" + set_count);
-  // console.log("");
-
   // Size of boxes
   var box_size = 100 / set_count;
 
-  console.log("box_size=" + box_size);
-
+  // Resize all appts in this group
   col.find(group_selector).each(function() {
-    console.log($(this).attr('id') + " css left is " + (box_size * parseInt($(
-      this).attr(
-      'data-set'))) + '%');
-
+    
     $(this).css({
       left: (box_size * parseInt($(this).attr('data-set'))) + '%',
       width: box_size + '%'
@@ -119,39 +115,44 @@ function resizeGroup(col, group_id, set_count) {
 
 }
 
-function makeSet(col, group_id) {
+/**
+ * makeSets
+ * 
+ * @brief Makes set of non-overlapping appointments.
+ * 
+ * @param {Object} col is expected to be a jquery selector of a column.
+ * @param {Number} group_id is expected to be the number of a group in the 
+ * column.
+ * 
+ * @return {Number} number of sets found. 
+ */
+function makeSets(col, group_id) {
 
+  // Used to number sets
   var set_id = 0;
-  var set_number;
+  
+  // search term for group
   var group_selector = '.appt[data-group=' + group_id + ']';
 
   // Find set in the group that don't overlap
   col.find(group_selector).each(function() {
 
+    // Current appointment info 
     var appt = $(this);
     appt.id = $(this).attr('id');
     appt.start = $(this).attr('data-start');
     appt.end = $(this).attr('data-end');
 
-
-    console.log((appt.attr('data-set') == null) ? appt.id +
-      " needs to be set to " + set_id : appt.id + " is set to " + appt.attr(
-        'data-set'));
-
-    console.log("set_id=" + set_id);
-
+    // Give this appt a set if it does not have one
     if (appt.attr('data-set') == null) {
-
       appt.attr('data-set', set_id++);
-
-      console.log(appt.id + " has been assigned to " + appt.attr('data-set'));
     }
 
-    //set_id++;
-
+    // Label appointments
     appt.text("[id=" + appt.id + "] [data-group= " + appt.attr(
       'data-group') + "] [data-set=" + appt.attr('data-set') + "]");
 
+    
     col.find(group_selector).each(function() {
 
       //  if it's not the appointment working with above
@@ -164,30 +165,20 @@ function makeSet(col, group_id) {
         var appt_start = parseInt(appt.start);
         var appt_end = parseInt(appt.end);
 
-        console.log(appt.id + " comparing with " + $(this).attr('id'));
-
         // Find members that do not overlap
         if ((appt_start <= end || appt_end >= start) && (appt_end <= start ||
           appt_start >= end)) {
 
 
-          console.log(appt.id + " does not overlap with " + $(this).attr(
-            'id'));
-          
-
           // this doesn't have a group? create one
           if ($(this).attr('data-set') == null) {
 
+            // Added to the set of the appt its being compared with.
             $(this).attr('data-set', appt.attr('data-set'));
 
           }
 
-        } else {
-
-          console.log(appt.id + " does overlap with " + $(this).attr(
-            'id'));
-        }
-
+        } 
       }
     });
 
@@ -196,22 +187,38 @@ function makeSet(col, group_id) {
   return set_id;
 }
 
+/**
+ * stackCols
+ *
+ * @brief Cycles through columns resizing appointments to fit.
+ *
+ * @details This function groups appointments that overlap by calling
+ *   makeGroups function, then those groups are cycled through. Sets of
+ *   appointments in a group that don't overlap are made using the makeSets
+ *   method which returns the number of sets in that group. Finally the group
+ *   is resized according to the number of sets in each group.
+ *
+ * @return [none]
+ */
 function stackCols() {
 
-
-
-  // This is the function that needs work
-  $('.appt_canvas').each(function() { // run through each column
+  // Cycle through each column
+  $('.appt_canvas').each(function() {
     var col = $(this);
-    var appt = null;
+    
+    // number of groups in a column
     var group_count = makeGroups(col);
-    if (group_count != 0){
 
+    if (group_count != 0) {
 
+      // Cycle through all groups in this column making set 
+      // and resizing them to fit
       for (var current_group = 0; current_group <= group_count; current_group++) {
 
-        console.log("Incrimenter is a " + typeof(current_group));
-        var set_count = makeSet(col, current_group);
+        // Make set and get number of sets in this group
+        var set_count = makeSets(col, current_group);
+
+        // Now make them all fit
         resizeGroup(col, current_group, set_count);
       }
 
