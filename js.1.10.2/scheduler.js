@@ -16,7 +16,7 @@ $(document).ready(function() {
 });
 
 // Find if there are any overlapping appts
-function makeGroup(col) {
+function makeGroups(col) {
   var group_id = 0;
   var status = false;
 
@@ -76,35 +76,29 @@ function makeGroup(col) {
 
         console.log(appt.id + " calling resizeGroup= " + ($(this).attr(
           'data-set') == null && status));
-        // TODO 
-        if ($(this).attr('data-set') == null && status) {
-          resizeGroup(col, appt);
-        }
-
       }
     });
   });
 
 
-  return status;
+  return group_id;
 }
 
-function resizeGroup(col, appt) {
+function resizeGroup(col, group_id, set_count) {
 
 
+  console.log("Group id is a " + typeof(group_id));
   // Incrementing value to offset appts
   var left_offset = 0;
-  var set_count = 0;
   var box_size;
-  var group_selector = '.appt[data-group=' + appt.attr(
-    'data-group') + ']';
+  var group_selector = '.appt[data-group=' + group_id + ']';
 
-  //Find sub groups. These will be item that do not overlap in
-  // the group
-  set_count = makeSet(col, group_selector, set_count);
+  // //Find sub groups. These will be item that do not overlap in
+  // // the group
+  // set_count = makeSet(col, group_selector);
 
-  console.log(" set_count=" + set_count);
-  console.log("");
+  // console.log(" set_count=" + set_count);
+  // console.log("");
 
   // Size of boxes
   var box_size = 100 / set_count;
@@ -125,13 +119,11 @@ function resizeGroup(col, appt) {
 
 }
 
-function makeSet(col, group_selector, set_count) {
+function makeSet(col, group_id) {
 
   var set_id = 0;
-  var new_set_count = 0;
-  var group_length = $(group_selector).length;
   var set_number;
-  var group_id = parseInt($(group_selector).attr('data-group'));
+  var group_selector = '.appt[data-group=' + group_id + ']';
 
   // Find set in the group that don't overlap
   col.find(group_selector).each(function() {
@@ -150,12 +142,12 @@ function makeSet(col, group_selector, set_count) {
 
     if (appt.attr('data-set') == null) {
 
-      appt.attr('data-set', set_id);
+      appt.attr('data-set', set_id++);
 
       console.log(appt.id + " has been assigned to " + appt.attr('data-set'));
     }
 
-    set_id++;
+    //set_id++;
 
     appt.text("[id=" + appt.id + "] [data-group= " + appt.attr(
       'data-group') + "] [data-set=" + appt.attr('data-set') + "]");
@@ -181,7 +173,7 @@ function makeSet(col, group_selector, set_count) {
 
           console.log(appt.id + " does not overlap with " + $(this).attr(
             'id'));
-          new_set_count++;
+          
 
           // this doesn't have a group? create one
           if ($(this).attr('data-set') == null) {
@@ -201,10 +193,7 @@ function makeSet(col, group_selector, set_count) {
 
   });
 
-  if (set_count < new_set_count)
-    return new_set_count;
-  else
-    return set_count;
+  return set_id;
 }
 
 function stackCols() {
@@ -215,7 +204,18 @@ function stackCols() {
   $('.appt_canvas').each(function() { // run through each column
     var col = $(this);
     var appt = null;
-    makeGroup(col);
+    var group_count = makeGroups(col);
+    if (group_count != 0){
+
+
+      for (var current_group = 0; current_group <= group_count; current_group++) {
+
+        console.log("Incrimenter is a " + typeof(current_group));
+        var set_count = makeSet(col, current_group);
+        resizeGroup(col, current_group, set_count);
+      }
+
+    }
   });
 }
 
