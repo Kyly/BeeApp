@@ -18,7 +18,7 @@ $(document).ready(function() {
 // Find if there are any overlapping appts
 function makeGroup(col) {
 
-  var status = false;
+  var status;
 
   console.log("isOverlapping");
 
