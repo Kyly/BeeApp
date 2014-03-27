@@ -18,7 +18,6 @@ $(document).ready(function() {
 // Find if there are any overlapping appts
 function makeGroup(col) {
   var group_id = 0;
-
   var status = false;
 
   col.find('.appt').each(function() {
@@ -95,18 +94,20 @@ function resizeGroup(col, appt) {
 
   // Incrementing value to offset appts
   var left_offset = 0;
-  var num_sets;
+  var set_count = 0;
   var box_size;
   var group_selector = '.appt[data-group=' + appt.attr(
     'data-group') + ']';
 
   //Find sub groups. These will be item that do not overlap in
   // the group
-  num_sets = makeSet(col, group_selector);
+  set_count = makeSet(col, group_selector, set_count);
 
-  console.log("num_sets=" + num_sets);
+  console.log(" set_count=" + set_count);
+  console.log("");
+
   // Size of boxes
-  var box_size = 100 / num_sets;
+  var box_size = 100 / set_count;
 
   console.log("box_size=" + box_size);
 
@@ -124,12 +125,13 @@ function resizeGroup(col, appt) {
 
 }
 
-function makeSet(col, group_selector) {
+function makeSet(col, group_selector, set_count) {
 
   var set_id = 0;
-  var set_count;
-  var group_length;
+  var new_set_count = 0;
+  var group_length = $(group_selector).length;
   var set_number;
+  var group_id = parseInt($(group_selector).attr('data-group'));
 
   // Find set in the group that don't overlap
   col.find(group_selector).each(function() {
@@ -139,23 +141,20 @@ function makeSet(col, group_selector) {
     appt.start = $(this).attr('data-start');
     appt.end = $(this).attr('data-end');
 
-    // Number of elements in the group.
-    // As sets sets make one element so as set are created
-    // the group will be subtracted from
-    group_length = $(group_selector).length;
 
     console.log((appt.attr('data-set') == null) ? appt.id +
-      " needs to be set to "  + set_id : appt.id + " is set to " + appt.attr('data-set'));
+      " needs to be set to " + set_id : appt.id + " is set to " + appt.attr(
+        'data-set'));
 
     console.log("set_id=" + set_id);
-    
+
     if (appt.attr('data-set') == null) {
 
       appt.attr('data-set', set_id);
 
       console.log(appt.id + " has been assigned to " + appt.attr('data-set'));
     }
-    
+
     set_id++;
 
     appt.text("[id=" + appt.id + "] [data-group= " + appt.attr(
@@ -179,22 +178,19 @@ function makeSet(col, group_selector) {
         if ((appt_start <= end || appt_end >= start) && (appt_end <= start ||
           appt_start >= end)) {
 
+
           console.log(appt.id + " does not overlap with " + $(this).attr(
             'id'));
+          new_set_count++;
 
           // this doesn't have a group? create one
           if ($(this).attr('data-set') == null) {
 
             $(this).attr('data-set', appt.attr('data-set'));
 
-            console.log("====================================================");
-            console.log("<" + $(this).attr('id') +
-              " has been assigned to set " + appt.attr('data-set') + ">");
-            console.log("====================================================");
-
           }
 
-        } else{
+        } else {
 
           console.log(appt.id + " does overlap with " + $(this).attr(
             'id'));
@@ -202,11 +198,13 @@ function makeSet(col, group_selector) {
 
       }
     });
-    set_number = parseInt(appt.attr('data-set'));
-    console.log("===>" + typeof(set_number));
+
   });
-  console.log(set_number +" + "+ 1 + " = " + (set_number + 1));
-  return set_number + 1;
+
+  if (set_count < new_set_count)
+    return new_set_count;
+  else
+    return set_count;
 }
 
 function stackCols() {
