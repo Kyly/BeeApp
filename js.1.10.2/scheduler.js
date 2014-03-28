@@ -38,14 +38,8 @@ function makeGroups(col) {
     appt.start = $(this).attr('data-start');
     appt.end = $(this).attr('data-end');
 
-    console.log("makeGroup: [id=" + appt.id + "] [data-group= " + appt.attr(
-      'data-group') + "]");
-
     // If group is not set then assign group
     if (appt.attr('data-group') == null) {
-
-      console.log("makeGroup: " + appt.id + " is added to " + group_id +
-        " group.");
       appt.attr('data-group', group_id++);
     }
 
@@ -86,7 +80,6 @@ function makeGroups(col) {
   });
   // Return number of groups
 
-  console.log("makeGroup: returns " + group_id);
   return group_id;
 }
 
@@ -134,8 +127,6 @@ function resizeGroup(col, group_id, set_count) {
  */
 function makeSets(col, group_id) {
 
-  var buf = 2;
-
   var set_id = 0; // Used to number sets
   var group_selector = '.appt[data-group=' + group_id + ']'; // search term for group
 
@@ -145,8 +136,6 @@ function makeSets(col, group_id) {
     // Current appointment info 
     var appt = $(this);
     appt.id = $(this).attr('id');
-    
-
 
     // Give this appt a set if it does not have one
     if (appt.attr('data-set') == null) {
@@ -167,15 +156,30 @@ function makeSets(col, group_id) {
         // Find members that do not overlap
         if (!isOverlapping(appt, $(this))) {
 
-
           // this doesn't have a group? create one
           if ($(this).attr('data-set') == null) {
 
             // Added to the set of the appt its being compared with.
             $(this).attr('data-set', appt.attr('data-set'));
 
+            // Label appointments
+            appt.text("[id=" + appt.id + "] [data-group= " + appt.attr(
+                'data-group') + "] [data-set=" + appt.attr('data-set') +
+              "]");
+
           }
 
+        }
+
+        // Appt didn't overlap with one member of set but overlapped with
+        // another member of the same set
+        else if (appt.attr('data-set') == $(this).attr('data-set')) {
+          $(this).attr('data-set', set_id++);
+
+          // TODO this just helps with debugging
+          $(this).text("[id=" + $(this).attr('id') + "] [data-group= " + $(
+            this).attr('data-group') + "] [data-set=" + appt.attr('data-set') +
+              "]");
         }
       }
     });
@@ -198,7 +202,6 @@ function makeSets(col, group_id) {
  */
 function stackCols() {
 
-  console.log("stackCols is called.");
   // Cycle through each column
   $('.appt_canvas').each(function() {
     var col = $(this);
@@ -232,7 +235,7 @@ function stackCols() {
  * @return {boolean} True if objects overlap.
  */
 function isOverlapping(appt, obj_this) {
-  
+
   // Convert start and end times to integer values
   // for comparison
   var start = parseInt(obj_this.attr('data-start'));
@@ -241,7 +244,7 @@ function isOverlapping(appt, obj_this) {
   var appt_end = parseInt(appt.attr('data-end'));
 
   return (appt_start > end && appt_end < start || appt_end > start &&
-          appt_start < end);
+    appt_start < end);
 }
 
 function apptTop(start) {
@@ -262,7 +265,10 @@ function appts() {
     if (!$(this).hasClass('draggable')) {
       $(this).draggable().addClass('draggable');
     }
+
   });
+
+  // TODO: Make so the only column sorted is the one that changed
   $('.appt_canvas').droppable({
     drop: function(event, ui) {
       var appt = $(ui.draggable[0]);
@@ -276,6 +282,10 @@ function appts() {
       }).css('left', '');
       $(appt).appendTo(this);
       $('.appt').each(function() {
+        $(this).css({
+          left: 0 + '%',
+          width: 100 + '%'
+        });
         $(this).removeAttr('data-group');
         $(this).removeAttr('data-set');
 
@@ -322,6 +332,7 @@ function mouseTracker() {
       resizing = false;
       $('#new_appt').removeAttr('id');
       showDialog($('#add_appt').html(), 'New Appointment', 570);
+      stackCols();
     }
   });
 }
