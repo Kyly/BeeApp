@@ -1,5 +1,6 @@
 $(document).ready(function() {
   //globals
+  resizing = false;
   hourHeight = $('.hour').outerHeight();
   //initialize 
   viewport();
@@ -121,7 +122,7 @@ function resizeGroup(col, group_id, set_count) {
  *
  * @param {Object} col is expected to be a jquery selector of a column.
  * @param {Number} group_id is expected to be the number of a group in the
- * column.
+ *   column.
  *
  * @return {Number} number of sets found.
  */
