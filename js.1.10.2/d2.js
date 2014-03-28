@@ -10,7 +10,6 @@ function initD2(){
                         <div id='d_controls'>\n\
                         </div>\n\
                     </div>";
-    console.log(dialogShell)
     $(dialogShell).appendTo('body');
     $('.dialog').draggable({
         handle: '#d_tile'

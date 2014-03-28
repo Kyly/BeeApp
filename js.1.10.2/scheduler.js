@@ -25,20 +25,27 @@ $(document).ready(function() {
  */
 function makeGroups(col) {
 
+  console.log("makeGroups: is called and passed col.");
+
   // Number groups
   var group_id = 0;
 
   col.find('.appt').each(function() {
 
     // Current appointment info 
-    var appt   = $(this);
-    appt.id    = $(this).attr('id');
+    var appt = $(this);
+    appt.id = $(this).attr('id');
     appt.start = $(this).attr('data-start');
-    appt.end   = $(this).attr('data-end');
+    appt.end = $(this).attr('data-end');
 
+    console.log("makeGroup: [id=" + appt.id + "] [data-group= " + appt.attr(
+      'data-group') + "]");
 
     // If group is not set then assign group
     if (appt.attr('data-group') == null) {
+
+      console.log("makeGroup: " + appt.id + " is added to " + group_id +
+        " group.");
       appt.attr('data-group', group_id++);
     }
 
@@ -58,19 +65,16 @@ function makeGroups(col) {
       //  if it's not the appointment working with above
       if ($(this).attr('id') != appt.id) {
 
-        var start      = parseInt($(this).attr('data-start'));
-        var end        = parseInt($(this).attr('data-end'));
-        var appt_start = parseInt(appt.start);
-        var appt_end   = parseInt(appt.end);
-
         // Find any overlap
-        if (appt_start > end && appt_end < start || appt_end > start &&
-          appt_start < end) {
+        if (isOverlapping(appt, $(this))) {
 
           status = true;
 
           // this doesn't have a group? create one
           if ($(this).attr('data-group') == null) {
+
+            console.log("makeGroup: " + $(this).attr('id') +
+              " has been added to " + appt.attr('data-group') + " group.");
 
             $(this).attr('data-group', appt.attr('data-group'));
 
@@ -81,6 +85,8 @@ function makeGroups(col) {
     });
   });
   // Return number of groups
+
+  console.log("makeGroup: returns " + group_id);
   return group_id;
 }
 
@@ -99,9 +105,9 @@ function makeGroups(col) {
 function resizeGroup(col, group_id, set_count) {
 
   // Incrementing value to offset appts
-  var left_offset    = 0;
+  var left_offset = 0;
   var group_selector = '.appt[data-group=' + group_id + ']';
-  var box_size       = 100 / set_count; // Size of boxes
+  var box_size = 100 / set_count; // Size of boxes
 
   // Resize all appts in this group
   col.find(group_selector).each(function() {
@@ -122,23 +128,25 @@ function resizeGroup(col, group_id, set_count) {
  *
  * @param {Object} col is expected to be a jquery selector of a column.
  * @param {Number} group_id is expected to be the number of a group in the
- *   column.
+ * column.
  *
  * @return {Number} number of sets found.
  */
 function makeSets(col, group_id) {
 
-  var set_id         = 0; // Used to number sets
+  var buf = 2;
+
+  var set_id = 0; // Used to number sets
   var group_selector = '.appt[data-group=' + group_id + ']'; // search term for group
 
   // Find set in the group that don't overlap
   col.find(group_selector).each(function() {
 
     // Current appointment info 
-    var appt   = $(this);
-    appt.id    = $(this).attr('id');
-    appt.start = $(this).attr('data-start');
-    appt.end   = $(this).attr('data-end');
+    var appt = $(this);
+    appt.id = $(this).attr('id');
+    
+
 
     // Give this appt a set if it does not have one
     if (appt.attr('data-set') == null) {
@@ -156,16 +164,8 @@ function makeSets(col, group_id) {
       //  if it's not the appointment working with above
       if ($(this).attr('id') != appt.id) {
 
-        // Convert start and end times to integer values
-        // for comparison
-        var start      = parseInt($(this).attr('data-start'));
-        var end        = parseInt($(this).attr('data-end'));
-        var appt_start = parseInt(appt.start);
-        var appt_end   = parseInt(appt.end);
-
         // Find members that do not overlap
-        if ((appt_start <= end || appt_end >= start) && (appt_end <= start ||
-          appt_start >= end)) {
+        if (!isOverlapping(appt, $(this))) {
 
 
           // this doesn't have a group? create one
@@ -198,6 +198,7 @@ function makeSets(col, group_id) {
  */
 function stackCols() {
 
+  console.log("stackCols is called.");
   // Cycle through each column
   $('.appt_canvas').each(function() {
     var col = $(this);
@@ -217,9 +218,30 @@ function stackCols() {
         // Now make them all fit
         resizeGroup(col, current_group, set_count);
       }
-
     }
   });
+}
+
+/**
+ * @brief Checks if two object are overlapping.
+ * @details Will return true is object are overlapping.
+ *
+ * @param {Object} appt expected to to be a jquery selector object
+ * @param {Object} obj_this expected to to be a jquery selector object
+ *
+ * @return {boolean} True if objects overlap.
+ */
+function isOverlapping(appt, obj_this) {
+  
+  // Convert start and end times to integer values
+  // for comparison
+  var start = parseInt(obj_this.attr('data-start'));
+  var end = parseInt(obj_this.attr('data-end'));
+  var appt_start = parseInt(appt.attr('data-start'));
+  var appt_end = parseInt(appt.attr('data-end'));
+
+  return (appt_start > end && appt_end < start || appt_end > start &&
+          appt_start < end);
 }
 
 function apptTop(start) {
@@ -243,7 +265,25 @@ function appts() {
   });
   $('.appt_canvas').droppable({
     drop: function(event, ui) {
-      $(ui.draggable[0]).css('left', '').appendTo(this);
+      var appt = $(ui.draggable[0]);
+      var top = parseInt(appt.css('top').replace('px', ''));
+      var start = Math.round(top / hourHeight) * 100;
+      var time = parseInt(appt.attr('data-end')) - parseInt(appt.attr(
+        'data-start'));
+      appt.attr({
+        'data-start': start,
+        'data-end': start + time
+      }).css('left', '');
+      $(appt).appendTo(this);
+      $('.appt').each(function() {
+        $(this).removeAttr('data-group');
+        $(this).removeAttr('data-set');
+
+        // For debugging I'm clearing the text to
+        $(this).text(" ");
+      });
+
+      stackCols();
     }
   });
 }
