@@ -1,5 +1,6 @@
 $(document).ready(function() {
   //globals
+  numberOfNewAppts = 0; // The names of the appts need to be unique
   resizing = false;
   hourHeight = $('.hour').outerHeight();
   //initialize 
@@ -24,8 +25,6 @@ $(document).ready(function() {
  *
  */
 function makeGroups(col) {
-
-  console.log("makeGroups: is called and passed col.");
 
   // Number groups
   var group_id = 0;
@@ -57,29 +56,13 @@ function makeGroups(col) {
     col.find('.appt').each(function() { //for each appointment
 
       //  if it's not the appointment working with above
-      if ($(this).attr('id') != appt.id) {
-
-        // Find any overlap
-        if (isOverlapping(appt, $(this))) {
-
-          status = true;
-
-          // this doesn't have a group? create one
-          if ($(this).attr('data-group') == null) {
-
-            console.log("makeGroup: " + $(this).attr('id') +
-              " has been added to " + appt.attr('data-group') + " group.");
-
+      if ($(this).attr('id') != appt.id && isOverlapping(appt, $(this))) {
             $(this).attr('data-group', appt.attr('data-group'));
-
-          };
-
-        }
       }
     });
   });
-  // Return number of groups
 
+  // Return number of groups
   return group_id;
 }
 
@@ -121,7 +104,7 @@ function resizeGroup(col, group_id, set_count) {
  *
  * @param {Object} col is expected to be a jquery selector of a column.
  * @param {Number} group_id is expected to be the number of a group in the
- * column.
+ *   column.
  *
  * @return {Number} number of sets found.
  */
@@ -171,7 +154,7 @@ function makeSets(col, group_id) {
 
         }
 
-        // Appt didn't overlap with one member of set but overlapped with
+        // Appt didn't overlap with one member of a set but overlapped with
         // another member of the same set
         else if (appt.attr('data-set') == $(this).attr('data-set')) {
           $(this).attr('data-set', set_id++);
@@ -226,6 +209,8 @@ function stackCols() {
 }
 
 /**
+ * isOverlapping
+ * 
  * @brief Checks if two object are overlapping.
  * @details Will return true is object are overlapping.
  *
@@ -258,6 +243,29 @@ function apptTop(start) {
 
 function apptHeight(start, end) {
   return apptTop(end - start);
+}
+
+/**
+ * cssToTime
+ * 
+ * @brief feed it the css.top  or css.height values to get the start 
+ *  time or end time for an appointment.
+ * @detail turns  "175px"  in to  175 let's say hourHeight is 70 
+ *  (this is the number of pixels tall each hour marker is). Divide 
+ *  time / height and round down to get the hours 
+ * @param {String} Function expects string as "155px" or whatever value 
+ *  with "px".
+ * @return {Number} Returns military time as 100 for 1:00 am, 130 as 1:30, 
+ *  1315 as 1:15 pm
+ */
+function cssToTime(px){ // some css value in px, such as top or height
+    var time = parseInt(px.replace('px', ''));
+    var hours  = Math.floor(time / hourHeight);
+    //minutes are trickier
+    hours = hours * 100; //for military time
+    var fraction = time % hourHeight;
+    var minutes  = Math.floor( (fraction / hourHeight) * 60 );// 60 for minutes
+    return hours + minutes;
 }
 
 function appts() {
@@ -298,6 +306,7 @@ function appts() {
   });
 }
 
+
 function newAppts() {
   //  Creates a new appointment div when you click and drag in a collumn 
   $(document).on('mousedown', '.appt_canvas', function(e) {
@@ -329,7 +338,30 @@ function mouseTracker() {
 
   $(document).on('mouseup', '.appt_canvas', function(e) {
     if (resizing == true) {
+
+      var appt = $('#new_appt');
+      // $('#new_appt').removeAttr('id');
+      appt.attr('id', "new_appt" + numberOfNewAppts++);
+
+      var start = cssToTime(appt.css('top'));
+      var end = start + cssToTime(appt.css('height'));
+
+      appt.attr({
+        'data-start': start,
+        'data-end': end
+      });
+
+      showDialog($('#add_appt').html(), 'New Appointment', 570);
+      
       resizing = false;
+      stackCols();
+    }
+  });
+
+  $(document).on('mouseup', '.appt_canvas', function(e) {
+    if (resizing == true) {
+      resizing = false;
+      
       $('#new_appt').removeAttr('id');
       showDialog($('#add_appt').html(), 'New Appointment', 570);
       stackCols();
