@@ -1,6 +1,7 @@
 $(document).ready(function() {
   //globals
   numberOfNewAppts = 0; // The names of the appts need to be unique
+  roundTo = 4;
   resizing = false;
   hourHeight = $('.hour').outerHeight();
   //initialize 
@@ -57,7 +58,7 @@ function makeGroups(col) {
 
       //  if it's not the appointment working with above
       if ($(this).attr('id') != appt.id && isOverlapping(appt, $(this))) {
-            $(this).attr('data-group', appt.attr('data-group'));
+        $(this).attr('data-group', appt.attr('data-group'));
       }
     });
   });
@@ -100,7 +101,7 @@ function resizeGroup(col, group_id, set_count) {
 /**
  * makeSets
  *
- * @brief Makes set of non-overlapping appointments.
+ * @brief Makes sets of non-overlapping appointments.
  *
  * @param {Object} col is expected to be a jquery selector of a column.
  * @param {Number} group_id is expected to be the number of a group in the
@@ -161,8 +162,9 @@ function makeSets(col, group_id) {
 
           // TODO this just helps with debugging
           $(this).text("[id=" + $(this).attr('id') + "] [data-group= " + $(
-            this).attr('data-group') + "] [data-set=" + appt.attr('data-set') +
-              "]");
+              this).attr('data-group') + "] [data-set=" + appt.attr(
+              'data-set') +
+            "]");
         }
       }
     });
@@ -210,7 +212,7 @@ function stackCols() {
 
 /**
  * isOverlapping
- * 
+ *
  * @brief Checks if two object are overlapping.
  * @details Will return true is object are overlapping.
  *
@@ -245,30 +247,39 @@ function apptHeight(start, end) {
   return apptTop(end - start);
 }
 
+function round(num) {
+  return Math.round(num / 100 * roundTo) / roundTo * 100;
+}
+
+function roundMin(min) {
+  return (Math.round(min/15) * 15) % 60;
+}
+
 /**
  * cssToTime
- * 
- * @brief feed it the css.top  or css.height values to get the start 
+ *
+ * @brief feed it the css.top  or css.height values to get the start
  *  time or end time for an appointment.
- * @detail turns  "175px"  in to  175 let's say hourHeight is 70 
- *  (this is the number of pixels tall each hour marker is). Divide 
- *  time / height and round down to get the hours 
- * @param {String} Function expects string as "155px" or whatever value 
+ * @detail turns  "175px"  in to  175 let's say hourHeight is 70
+ *  (this is the number of pixels tall each hour marker is). Divide
+ *  time / height and round down to get the hours
+ * @param {String} Function expects string as "155px" or whatever value
  *  with "px".
- * @return {Number} Returns military time as 100 for 1:00 am, 130 as 1:30, 
+ * @return {Number} Returns military time as 100 for 1:00 am, 130 as 1:30,
  *  1315 as 1:15 pm
  */
-function cssToTime(px){ // some css value in px, such as top or height
-    var time = parseInt(px.replace('px', ''));
-    var hours  = Math.floor(time / hourHeight);
-    //minutes are trickier
-    hours = hours * 100; //for military time
-    var fraction = time % hourHeight;
-    var minutes  = Math.floor( (fraction / hourHeight) * 60 );// 60 for minutes
-    return hours + minutes;
+function cssToTime(px) { // some css value in px, such as top or height
+  var time = parseInt(px.replace('px', ''));
+  var hours = Math.floor(time / hourHeight);
+  //minutes are trickier
+  hours = hours * 100; //for military time
+  var fraction = time % hourHeight;
+  var minutes = roundMin((fraction / hourHeight) * 60); // 60 for minutes
+  return hours + minutes;
 }
 
 function appts() {
+
   $(document).on('mouseover', '.appt', function() {
     if (!$(this).hasClass('draggable')) {
       $(this).draggable().addClass('draggable');
@@ -282,6 +293,8 @@ function appts() {
       var appt = $(ui.draggable[0]);
       var top = parseInt(appt.css('top').replace('px', ''));
       var start = Math.round(top / hourHeight) * 100;
+      //var start = Math.round(top / (hourHeight * 100) * roundTo)/roundTo * 100;
+
       var time = parseInt(appt.attr('data-end')) - parseInt(appt.attr(
         'data-start'));
       appt.attr({
@@ -308,13 +321,17 @@ function appts() {
 
 
 function newAppts() {
-  //  Creates a new appointment div when you click and drag in a collumn 
+  //  Creates a new appointment div when you click and drag in a column 
   $(document).on('mousedown', '.appt_canvas', function(e) {
 
     //make sure this is a direct click
     if ($(e.originalEvent.target).hasClass('appt_canvas')) {
-      var pos = Math.round($('.hour_mouse_tracker').css('top').replace('px',
-        '')); // / 37) * 37;
+
+      // Snaps location to the nearest quarter
+      // var pos = Math.round($('.hour_mouse_tracker').css('top').replace('px',
+      //   '')); // / 37) * 37;
+      var pos = round($('.hour_mouse_tracker').css('top').replace('px',
+        ''));
       var apt = $('<div id="new_appt" class="appt"></div>').appendTo(this);
       resizing = true;
       apt.css('top', pos + 'px');
@@ -344,7 +361,9 @@ function mouseTracker() {
       appt.attr('id', "new_appt" + numberOfNewAppts++);
 
       var start = cssToTime(appt.css('top'));
-      var end = start + cssToTime(appt.css('height'));
+      var height = cssToTime(appt.css('height'));
+      console.log("Height is " + height + " and " + ((height == 0) ? 30 : height) + "is going to be used");
+      var end = start + ((height == 0) ? 30 : height);
 
       appt.attr({
         'data-start': start,
@@ -352,7 +371,7 @@ function mouseTracker() {
       });
 
       showDialog($('#add_appt').html(), 'New Appointment', 570);
-      
+
       resizing = false;
       stackCols();
     }
@@ -361,7 +380,7 @@ function mouseTracker() {
   $(document).on('mouseup', '.appt_canvas', function(e) {
     if (resizing == true) {
       resizing = false;
-      
+
       $('#new_appt').removeAttr('id');
       showDialog($('#add_appt').html(), 'New Appointment', 570);
       stackCols();
