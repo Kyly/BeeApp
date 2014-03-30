@@ -4,6 +4,8 @@ $(document).ready(function() {
   roundTo = 4;
   resizing = false;
   hourHeight = $('.hour').outerHeight();
+  verticalGapOffset = 0.5;  // For vertical spacing between events
+  horizontalGapOffset = 3;  // For horizontal spacing between events
   //initialize 
   viewport();
   appts();
@@ -43,16 +45,23 @@ function makeGroups(col) {
       appt.attr('data-group', group_id++);
     }
 
-
     // TODO Visually label the appts
-    appt.text("[id=" + appt.id + "] [data-group= " + appt.attr(
+    appt.text("[id=" + appt.id + "] [data-group=" + appt.attr(
       'data-group') + "]");
 
+<<<<<<< HEAD
     // Apply box dim fro attribute tags
     // appt.css({
     //   top: apptTop(appt.start) + 'px',
     //   height: apptHeight(appt.start, appt.end) + 'px'
     // });
+=======
+    // Apply box dim for attribute tags
+    appt.css({
+      top: apptTop(appt.start) + 'px',
+      height: apptHeight(appt.start, appt.end) + 'px'
+    });
+>>>>>>> 33a09fec022e584eac889a36ec0e504ccdd4e90f
 
     col.find('.appt').each(function() { //for each appointment
 
@@ -90,8 +99,9 @@ function resizeGroup(col, group_id, set_count) {
   col.find(group_selector).each(function() {
 
     $(this).css({
-      left: (box_size * parseInt($(this).attr('data-set'))) + '%',
-      width: box_size + '%'
+      left: ((box_size * parseInt($(this).attr('data-set'))) + verticalGapOffset) + '%',
+
+      width: (box_size - verticalGapOffset) + '%'
     });
 
   });
@@ -239,12 +249,14 @@ function apptTop(start) {
   var hours = Math.floor(start / 100);
   var minutes = start - (hours * 100);
 
-  //TODO: minutes height
+  //TODO: minutes height (What is this?)
   return hours * hourHeight;
 }
 
+  // Vertical gap looks good, but misrepresents event duration graphically
+  // Is this fine? Make it smaller?
 function apptHeight(start, end) {
-  return apptTop(end - start);
+  return apptTop(end - start) - horizontalGapOffset;
 }
 
 function round(num) {
