@@ -49,10 +49,10 @@ function makeGroups(col) {
       'data-group') + "]");
 
     // Apply box dim fro attribute tags
-    appt.css({
-      top: apptTop(appt.start) + 'px',
-      height: apptHeight(appt.start, appt.end) + 'px'
-    });
+    // appt.css({
+    //   top: apptTop(appt.start) + 'px',
+    //   height: apptHeight(appt.start, appt.end) + 'px'
+    // });
 
     col.find('.appt').each(function() { //for each appointment
 
@@ -230,7 +230,7 @@ function isOverlapping(appt, obj_this) {
   var appt_start = parseInt(appt.attr('data-start'));
   var appt_end = parseInt(appt.attr('data-end'));
 
-  return (appt_start > end && appt_end < start || appt_end > start &&
+  return (appt_start >= end && appt_end < start || appt_end >= start &&
     appt_start < end);
 }
 
@@ -275,6 +275,7 @@ function cssToTime(px) { // some css value in px, such as top or height
   hours = hours * 100; //for military time
   var fraction = time % hourHeight;
   var minutes = roundMin((fraction / hourHeight) * 60); // 60 for minutes
+  
   return hours + minutes;
 }
 
@@ -328,10 +329,12 @@ function newAppts() {
     if ($(e.originalEvent.target).hasClass('appt_canvas')) {
 
       // Snaps location to the nearest quarter
-      // var pos = Math.round($('.hour_mouse_tracker').css('top').replace('px',
-      //   '')); // / 37) * 37;
-      var pos = round($('.hour_mouse_tracker').css('top').replace('px',
-        ''));
+      var pos = Math.round($('.hour_mouse_tracker').css('top').replace('px',
+        '')); // / 37) * 37;
+
+      // TODO: Cursor snaps to position
+      // var pos = round($('.hour_mouse_tracker').css('top').replace('px',
+      //   ''));
       var apt = $('<div id="new_appt" class="appt"></div>').appendTo(this);
       resizing = true;
       apt.css('top', pos + 'px');
@@ -362,8 +365,9 @@ function mouseTracker() {
 
       var start = cssToTime(appt.css('top'));
       var height = cssToTime(appt.css('height'));
-      console.log("Height is " + height + " and " + ((height == 0) ? 30 : height) + "is going to be used");
-      var end = start + ((height == 0) ? 30 : height);
+      console.log("Height is " + height + " and " + ((height == 0) ? 15 : height) + "is going to be used");
+      // TODO: Haven't got this working yet
+      var end = start + ((height == 0) ? 15 : height);
 
       appt.attr({
         'data-start': start,
