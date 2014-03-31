@@ -49,20 +49,12 @@ function makeGroups(col) {
     appt.text("[id=" + appt.id + "] [data-group=" + appt.attr(
       'data-group') + "]");
 
-<<<<<<< HEAD
-    // Apply box dim fro attribute tags
+    // Apply box dim for attribute tags
     // appt.css({
     //   top: apptTop(appt.start) + 'px',
     //   height: apptHeight(appt.start, appt.end) + 'px'
     // });
-=======
-    // Apply box dim for attribute tags
-    appt.css({
-      top: apptTop(appt.start) + 'px',
-      height: apptHeight(appt.start, appt.end) + 'px'
-    });
->>>>>>> 33a09fec022e584eac889a36ec0e504ccdd4e90f
-
+    
     col.find('.appt').each(function() { //for each appointment
 
       //  if it's not the appointment working with above
