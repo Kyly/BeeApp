@@ -1,11 +1,13 @@
 $(document).ready(function() {
   //globals
+  ONE_HOUR = 100;
+  HOUR = 60;
+  ROUND_TO = 4;
   numberOfNewAppts = 0; // The names of the appts need to be unique
-  roundTo = 4;
   resizing = false;
   hourHeight = $('.hour').outerHeight();
-  verticalGapOffset = 0.5;  // For vertical spacing between events
-  horizontalGapOffset = 3;  // For horizontal spacing between events
+  verticalGapOffset = 0.5; // For vertical spacing between events
+  horizontalGapOffset = 3; // For horizontal spacing between events
   //initialize 
   viewport();
   appts();
@@ -13,8 +15,26 @@ $(document).ready(function() {
   mouseTracker();
   newAppts();
   newApptForm();
+  setCss();
   stackCols();
 });
+
+function setCss() {
+  $('.appt').each(function() {
+
+    // Current appointment info 
+    var appt = $(this);
+    appt.id = $(this).attr('id');
+    appt.start = $(this).attr('data-start');
+    appt.end = $(this).attr('data-end');
+
+    appt.css({
+      top: timeToPx(appt.start) + 'px',
+      height: apptHeight(appt.start, appt.end) + 'px'
+    });
+
+  });
+}
 
 /**
  * makeGroups
@@ -37,26 +57,38 @@ function makeGroups(col) {
     // Current appointment info 
     var appt = $(this);
     appt.id = $(this).attr('id');
-    appt.start = $(this).attr('data-start');
-    appt.end = $(this).attr('data-end');
+    // appt.start = $(this).attr('data-start');
+    // appt.end = $(this).attr('data-end');
 
     // If group is not set then assign group
     if (appt.attr('data-group') == null) {
       appt.attr('data-group', group_id++);
     }
 
+<<<<<<< HEAD
     // TODO Visually label the appts
     appt.text("[id=" + appt.id + "] [data-group=" + appt.attr(
       'data-group') + "]");
 
     // Apply box dim for attribute tags
+=======
+    //Apply box dim fro attribute tags
+>>>>>>> 0b8ee3208059c62cf24c00270d169ecc766a66bd
     // appt.css({
-    //   top: apptTop(appt.start) + 'px',
+    //   top: timeToPx(appt.start) + 'px',
     //   height: apptHeight(appt.start, appt.end) + 'px'
     // });
+<<<<<<< HEAD
     
     col.find('.appt').each(function() { //for each appointment
+=======
 
+    // TODO Visually label the appts
+    appt.text("[id=" + appt.id + "]");
+    //" [data-group=" + appt.attr('data-group') + "]");
+>>>>>>> 0b8ee3208059c62cf24c00270d169ecc766a66bd
+
+    col.find('.appt').each(function() { //for each appointment
       //  if it's not the appointment working with above
       if ($(this).attr('id') != appt.id && isOverlapping(appt, $(this))) {
         $(this).attr('data-group', appt.attr('data-group'));
@@ -91,9 +123,10 @@ function resizeGroup(col, group_id, set_count) {
   col.find(group_selector).each(function() {
 
     $(this).css({
-      left: ((box_size * parseInt($(this).attr('data-set'))) + verticalGapOffset) + '%',
+      left: box_size * parseInt($(this).attr('data-set')) + '%',
+        // verticalGapOffset) + '%',
 
-      width: (box_size - verticalGapOffset) + '%'
+      width: (box_size + '%') //- verticalGapOffset) + '%'
     });
 
   });
@@ -129,8 +162,7 @@ function makeSets(col, group_id) {
     }
 
     // Label appointments
-    appt.text("[id=" + appt.id + "] [data-group= " + appt.attr(
-      'data-group') + "] [data-set=" + appt.attr('data-set') + "]");
+    appt.text("[id=" + appt.id + "][data-group= " + appt.attr('data-group') + "][data-set=" + appt.attr('data-set') + "]");
 
 
     // Compare appt to group members
@@ -149,9 +181,7 @@ function makeSets(col, group_id) {
             $(this).attr('data-set', appt.attr('data-set'));
 
             // Label appointments
-            appt.text("[id=" + appt.id + "] [data-group= " + appt.attr(
-                'data-group') + "] [data-set=" + appt.attr('data-set') +
-              "]");
+            appt.text("[id=" + appt.id + "][data-group= " + appt.attr('data-group') + "][data-set=" + appt.attr('data-set') + "]");
 
           }
 
@@ -164,7 +194,7 @@ function makeSets(col, group_id) {
 
           // TODO this just helps with debugging
           $(this).text("[id=" + $(this).attr('id') + "] [data-group= " + $(
-              this).attr('data-group') + "] [data-set=" + appt.attr(
+              this).attr('data-group') + "][data-set=" + appt.attr(
               'data-set') +
             "]");
         }
@@ -216,7 +246,7 @@ function stackCols() {
  * isOverlapping
  *
  * @brief Checks if two object are overlapping.
- * @details Will return true is object are overlapping.
+ * @details Uses css pixel values to find if two objects are overlapping.
  *
  * @param {Object} appt expected to to be a jquery selector object
  * @param {Object} obj_this expected to to be a jquery selector object
@@ -227,13 +257,21 @@ function isOverlapping(appt, obj_this) {
 
   // Convert start and end times to integer values
   // for comparison
-  var start = parseInt(obj_this.attr('data-start'));
-  var end = parseInt(obj_this.attr('data-end'));
-  var appt_start = parseInt(appt.attr('data-start'));
-  var appt_end = parseInt(appt.attr('data-end'));
+  var start = parseInt(obj_this.css('top').replace('px', ''));
+  var end = start + parseInt(obj_this.css('height'));
+  var appt_start = parseInt(appt.css('top').replace('px', ''));
+  var appt_end = appt_start + parseInt(appt.css('height'));
 
   return (appt_start >= end && appt_end < start || appt_end >= start &&
     appt_start < end);
+}
+
+function timeToPx(time) {
+  var hoursPx = parseInt(time / ONE_HOUR) * hourHeight;
+  var minutes = time % HOUR;
+  var minPx = minutes / HOUR * hourHeight;
+
+  return hoursPx + minPx;
 }
 
 function apptTop(start) {
@@ -245,18 +283,19 @@ function apptTop(start) {
   return hours * hourHeight;
 }
 
-  // Vertical gap looks good, but misrepresents event duration graphically
-  // Is this fine? Make it smaller?
+// Vertical gap looks good, but misrepresents event duration graphically
+// Is this fine? Make it smaller?
 function apptHeight(start, end) {
-  return apptTop(end - start) - horizontalGapOffset;
+  return timeToPx(end - start); //- horizontalGapOffset;
 }
 
 function round(num) {
-  return Math.round(num / 100 * roundTo) / roundTo * 100;
+  return Math.round(num / 100 * ROUND_TO) / ROUND_TO * 100;
 }
 
 function roundMin(min) {
-  return (Math.round(min/15) * 15) % 60;
+  var minutes = Math.round(min / 15) * 15;
+  return (minutes == HOUR) ? ONE_HOUR : minutes;
 }
 
 /**
@@ -279,7 +318,7 @@ function cssToTime(px) { // some css value in px, such as top or height
   hours = hours * 100; //for military time
   var fraction = time % hourHeight;
   var minutes = roundMin((fraction / hourHeight) * 60); // 60 for minutes
-  
+
   return hours + minutes;
 }
 
@@ -298,7 +337,7 @@ function appts() {
       var appt = $(ui.draggable[0]);
       var top = parseInt(appt.css('top').replace('px', ''));
       var start = Math.round(top / hourHeight) * 100;
-      //var start = Math.round(top / (hourHeight * 100) * roundTo)/roundTo * 100;
+      //var start = Math.round(top / (hourHeight * 100) * ROUND_TO)/ROUND_TO * 100;
 
       var time = parseInt(appt.attr('data-end')) - parseInt(appt.attr(
         'data-start'));
@@ -369,8 +408,6 @@ function mouseTracker() {
 
       var start = cssToTime(appt.css('top'));
       var height = cssToTime(appt.css('height'));
-      console.log("Height is " + height + " and " + ((height == 0) ? 15 : height) + "is going to be used");
-      // TODO: Haven't got this working yet
       var end = start + ((height == 0) ? 15 : height);
 
       appt.attr({
